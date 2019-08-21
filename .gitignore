@@ -1,0 +1,7 @@
+/target/
+*.classpath
+
+osho-test-cucumber/config/configurations.properties
+osho-test-cucumber/pom.xml
+
+

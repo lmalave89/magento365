@@ -1,0 +1,157 @@
+Asunto: Test Magento 365.
+Autor: Luis Malave.
+
+Es importante aclarar que es un proyecto maven, cuando se haga la importación del mismo, debe hacerse como proyecto MAVEN, para
+tener su estructura y bajar las dependencias necesarias.
+
+Herramientas Usadas:
+
+* IDE Eclipse
+
+* Gherkin
+
+* Lenguaje de Programación Java 8.
+
+* Framework Cucumber.
+
+* Maven.
+  Maven -> Dependencias usadas:
+  - Junit  = Para pruebas unitarias.
+  - cucumber-java  = Para integrar el java con cucumber
+  - cucumber-junit = Para integrar el junit con cucumber
+  - cucumber-picocontainer = Para el inyector de dependencias
+  - extentreports = Para la generación de reportes.
+  - cucumber-extentsreport = Para la generación de reportes.
+  
+* Jars asociados para selenium:
+  - byte-buddy-1.7.9.jar
+  - commons-codec-1.10.jar
+  - commons-exec-1.3.jar
+  - commons-logging-1.2.jar
+  - gson-2.8.2.jar
+  - guava-23.6-jre.jar
+  - httpclient-4.5.3.jar
+  - httpcore-4.4.6.jar
+  - okhttp-3.9.1.jar
+  - okio-1.13.0.jar
+  
+* Estos jars se encuentran en la ruta   "generic-project\library\SetupByTest\selenium-java-3.11.0\libs",
+los cuales son indispensables agregarlos al proyecto, lo cual se hace de la siguiente manera:
+  - Click derecho en la carpeta del proyecto.
+  - Click en Build Path.
+  - Click en Configure Build Path.
+  - Click en tab Libraries.
+  - Clikc en Add Externals JARs
+  - Seleccionamos todos los jars mencionados anteriormente, en la ruta especficada
+  - Hacemos click en Apply.
+  - Hacemos click en Apply and Close
+  
+* Jars asociados para selenium:
+  - client-combined-3.11.0-sources.jar
+  - cclient-combined-3.11.0.jar
+
+* Estos jars se encuentran en la ruta   "generic-project\library\SetupByTest\selenium-java-3.11.0",
+los cuales son indispensables agregarlos al proyecto, lo cual se hace de la siguiente manera:
+  - Click derecho en la carpeta del proyecto.
+  - Click en Build Path.
+  - Click en Configure Build Path.
+  - Click en tab Libraries.
+  - Clikc en Add Externals JARs
+  - Seleccionamos todos los jars mencionados anteriormente, en la ruta especficada.
+  - Hacemos click en Apply.
+  - Hacemos click en Apply and Close    
+  
+Nota: "En algunos casos es necesario dependiendo la versión del eclipse, click sobre el proyecto, click en Maven, Update project, click en OK "
+       Esto nos actualiza las dependencias del proyecto.
+       
+Estructura del proyecto:
+
+ * En src/main/java
+ 	- Paquete "dataFeature", aqui se agregan todos las clases de los objetos usados para la data de los diferentes "Feature", que son
+ 	  los archivos Gherkin. Asi evitamos usar "Scenario Outline" o pasar data a través del Gherkin, lo cual si en algún momento se tiene
+ 	  que alterar data, no tocar los archivos Gherkin que van muy atados al entendimiento de los interesados, dueños de productos o 
+ 	  cualquier persona que desee entender el alcance.
+ 	  
+ 	 - Paquete "dataProvider", contiene el archivo que nos ayuda a leer el archivo plano "configurations.properties", en el cual declaramos
+ 	   las variables necesarias para iniciar nuestro proceso de automatización.
+ 	  
+ 	 - Paquete "Enums", nos provee los archivos con los enums de configuración de los ambientes, bien sea local o remoto ("No se implemento
+ 	   remoto") y de los drivers para los siguientes navegadores ("Solo se implemento Chrome debido fue lo solicitado").
+ 	   
+ 	 - Paquete "injectionDependenciesManager", posee el archivo de inyección de dependencias, para asi evitar el constante llamado de clases,
+ 	   por ende se inicia las clases "WebDriverManager", "PageObjectManager" y "GenericsFunctionsPage", que más adelante seran explicados.
+ 	    	   
+ 	 - Paquete "managers", es el paquete donde tenemos todos los orquestadores  para activar variables, configuraciiones y temas necesarios
+ 	   para asi evitar las constantes llamadas y declaraciones, entre esos tenemos:
+ 	     1._ FileReaderManager: Archivo encargado de aplicar el patrón singleton para para leer el archivo de configuraciones llamado 
+ 	         "ConfigFileReader.java" ubicado en el paquete "dataProvider".
+ 	     2._ PageObjectManager: Archivo encargado de inicializar cada vista que necesitemos en el patron Page Object Model usado.
+ 	     3._ WebDriverManager: Archivo encargado de inicializar el driver y asi evitar la constante reiteración del driver en los StepsDefinitos.
+ 	     
+ 	  - Paquete "pageObjects", en este archivo se declara todos los archivos Page Object Model, para mapear objetos en las vistas, adicionalmente
+ 	    posee la clase "GenericsFunctionsPage", la cual su sentido es tener funciones genericas que podamos usar y asi evitar duplicaicón de código.
+ 	    Todo eso para el momento de evaluar principios SOLID, buenas practicas de desarrollo, ejecutar cualquier evaluador de código obterner
+ 	    una buenas evaluaciones de código.
+ 	    
+ * En src/test/java
+ 
+ 	- Paquete "runners", este es el encargado de orquestar la ejecución de la automatización y adicionalmente pasar información para el reporte
+ 	- Paquete "stepDefenitions", este paquete en sus clases se define la definición de lógica de cada paso definido en los recursos bajo Gherkin
+ 	  Adicionalmente se crea la clase "Hooks.java" la cual nos permite establecer acciones antes y déspues de cada paso para el StepDefenitions.
+ 	  
+ * En src/test/resources
+    - Aqui se definen los archivos feature que son el Gherkin para definir todo el BDD de cada una de las pruebas.
+ 
+ * Carpeta "config"
+  	- Aqui se establece el archivo "configurations.properties", en el cual definimos las variables necesarias de ambientes, navegador, driver,
+  	  url, configuración de reportes.
+  	- Aqui se establece el archivo "extend-config.xml", este archivo tiene la configuración (General) del reporte de salida de ejecución del test.
+ 
+ * Carpeta "library"
+    - Aqui se contiene todos los drivers y jar necesarios para la ejecución de las pruebas.
+    
+ * Carpeta "Target"  
+ 	- Aqui dentro de encuentra todos los screenshots del reporte, junto al reporte en formato html ("Si quiere cambiar el formato del reporte
+ 	  se realiza en el runner cambiando la propiedad plugin").
+ 	  
+ * pom.xml: Archivo de maven que permite sus diferentes configuraciones de dependencias.
+ 
+ 
+ ESPECIFICACIONES ADICIONALES AGREGADAS PARA UNA ARQUITECTURA MÁS ROBUSTA Y ADAPTABLE (PLUS AGREGADOS):
+ 
+ * Se secciona data de pruebas, data de configuración, configuraciones, lógica de negocio, lógica de vistas para asi sea más modular
+   los desarrollos y evitar códigos repetitivos.
+   
+ * Se adiciona la capacidad de generar reportes, debido que el siempre espera un reporte cualquier interesado, para evaluar avances
+   del trabajo implementado.
+   
+ * Se adiciona Hooks para evitar reproducir tareas repetitivas y adicionalmente tomar los screenshots de las diversas pruebas.
+ 
+ * Se implemento cucumber como se esperaba en la prueba solicitada.
+ 
+ * Se adiciona todos los jars, ejecutables necesarios para poder ejecutar el proyecto solo con su descarga y adicionar los build paths.
+ 
+ * Se usan rutas relativas para evitar alteraciones de las mismas al momento de importar el proyecto de un repositirio o maquinas.
+ 
+ * La clase generica "GenericsFuntionsPage", es una biblioteca de funcionabilidades repetitivas que se va alimentando conforme la necesidad
+   de los desarrollos, esto nos ayuda a la reutilización y a medida de avances del proyecto, los desarrollos se vuelven más ágiles.
+   
+ * Se uso la relación de nombres entre las vistas "pageObjects" y el desarrollo "stepDefenitions" iguales con la terminación diferente,
+   para mentener armonia entre la lógica de negocio y el BDD Gherkin, asi la adaptación a la arquitectura de nuevos recursos es más sencilla.
+   
+ * Se genera la clase "WebDriverManager", para evitar el constante llamado del driver y junto al inyector de dependencias poder usarlo
+  en todas las clases.
+  
+ * Se usa inyectores de dependencias para asi poder pasar información y evitar la duplicidad de código.
+ 
+ 
+ El proyecto se puede ejecutar dando click derecho sobre la clase "TestRunner"->Run as -> JUnit.
+ Y tambien posicionandose en consola sobre el proyecto y ejecuta el comando "mvn test"
+ 
+
+ 
+  	  
+    
+ 	         
+
+  
